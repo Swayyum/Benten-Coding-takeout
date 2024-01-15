@@ -23,7 +23,6 @@ def text_to_speech(text):
         audio = waveglow.infer(mel)
     audio_numpy = audio[0].data.cpu().numpy()
 
-    # Save the generated speech to a WAV file
     write("output.mp3", 22050, audio_numpy) # Save the generated speech to a mp3 file
 
 # tests
