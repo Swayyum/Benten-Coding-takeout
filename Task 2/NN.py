@@ -1,33 +1,47 @@
-# NN.py
 import torch
 import numpy as np
-import soundfile as sf
+from scipy.io.wavfile import write
 
-def text_to_sequence(text, cleaners):
-    # Implement this function or use the appropriate one from NVIDIA's repo
-    # Convert text to a sequence of numerical IDs
+# Load pre-trained models from NVIDIA's repository
+tacotron2 = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tacotron2', model_math='fp16')
+tacotron2 = tacotron2.to('cuda')
+tacotron2.eval()
+
+waveglow = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_waveglow', model_math='fp16')
+waveglow = waveglow.remove_weightnorm(waveglow)
+waveglow = waveglow.to('cuda')
+waveglow.eval()
+
+# Function to preprocess text for Tacotron2
+def prepare_text_input(text):
+    # NVIDIA's Tacotron2 model requires text to be preprocessed in a specific way
+    # Refer to the NVIDIA's documentation or the tacotron2.text_to_sequence function's documentation
+    # for the correct preprocessing steps
+    # Example: sequence = np.array(tacotron2.text_to_sequence(text, ['english_cleaners']))[None, :]
+    # sequence = torch.from_numpy(sequence).to(device='cuda', dtype=torch.int64)
+    # return sequence
     pass
 
-def generate_speech_nn(text):
-    tacotron2 = torch.hub.load('nvidia/DeepLearningExamples:torchhub', 'nvidia_tacotron2', trust_repo=True)
-    tacotron2.eval()
+# Function to perform text-to-speech conversion
+def text_to_speech(text):
+    sequence = prepare_text_input(text)
 
-    waveglow = torch.hub.load('nvidia/DeepLearningExamples:torchhub', 'nvidia_waveglow', trust_repo=True)
-    waveglow.eval()
-
-    # Preprocess the text
-    sequence = np.array(text_to_sequence(text, ['english_cleaners']))[None, :]
-    sequence = torch.from_numpy(sequence).to(device='cuda', dtype=torch.int64)
-
-    # Calculate input lengths
-    input_lengths = torch.IntTensor([sequence.size(1)])
-
-    # Generating mel-spectrogram
+    # Generate mel-spectrogram using Tacotron2
     with torch.no_grad():
-        mel_spectrogram, _, _ = tacotron2.infer(sequence, input_lengths)
+        _, mel, _, _ = tacotron2.infer(sequence)
 
-    # Generating audio from mel-spectrogram using WaveGlow
+    # Generate audio waveform using WaveGlow
     with torch.no_grad():
-        audio = waveglow.infer(mel_spectrogram)
+        audio = waveglow.infer(mel)
+    audio_numpy = audio[0].data.cpu().numpy()
 
-    sf.write('output_nn.wav', audio.cpu().numpy().flatten(), 22050)
+    return audio_numpy
+
+# Example usage
+input_text = "Hello, I am your virtual assistant."
+speech_audio = text_to_speech(input_text)
+
+# Save the generated speech to a WAV file
+write("output.wav", 22050, speech_audio)
+
+# The output.wav file can be played using an audio player

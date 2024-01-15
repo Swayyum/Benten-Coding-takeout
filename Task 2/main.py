@@ -5,8 +5,8 @@ import tts
 
 def main():
     # Testing NN.py
-    print("Testing NN-based TTS...")
-    NN.generate_speech_nn("Hello, world from NN!")
+    #print("Testing NN-based TTS...")
+    #NN.generate_speech_nn("Hello, world from NN!")
 
     # Testing tts.py
     print("Testing gTTS-based TTS...")
