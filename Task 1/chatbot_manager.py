@@ -25,12 +25,11 @@ class ChatbotManager:
             self.conversations[user_id] = UserConversation()
         return self.conversations[user_id]
 
+
     def add_message(self, user_id, message):
-        # Add a message to the conversation of the specified user.
         conversation = self.get_conversation(user_id)
         conversation.add_message(message)
 
     def get_history(self, user_id):
-        # Retrieve the history of the conversation for the specified user.
         conversation = self.get_conversation(user_id)
         return conversation.get_history()
