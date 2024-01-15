@@ -1,4 +1,3 @@
-# Task1
 # Question 1  Implement a Python class that can be used to manage multiple users' conversations with the chatbot,
 # ensuring that each conversation is kept separate and that the chatbot can respond to each user in a
 # timely manner.
@@ -19,9 +18,7 @@ class ChatbotManager:
 
     #EXTRA FEATURES?!
     def get_conversation(self, user_id):
-        # Retrieve the conversation for the given user ID.
-        # If no conversation exists for the user, create a new one.
-        if user_id not in self.conversations:
+        if user_id not in self.conversations: # # If no conversation exists for the user, create a new one.
             self.conversations[user_id] = UserConversation()
         return self.conversations[user_id]
 

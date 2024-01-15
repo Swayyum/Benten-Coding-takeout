@@ -1,3 +1,6 @@
+# Task 2
+# You are building a text-to-speech model for a virtual assistant application that needs to sound natural and
+# human-like.
 # main.py
 import NN
 import tts

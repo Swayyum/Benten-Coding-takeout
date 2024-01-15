@@ -1,3 +1,7 @@
+# Task 1:
+# You are building a chatbot for a customer service application, where multiple users may be trying to
+# communicate with the chatbot at the same time
+
 from chatbot_manager import ChatbotManager
 from entities_extract import extract_entities_and_respond
 

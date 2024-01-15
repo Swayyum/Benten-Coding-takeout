@@ -1,3 +1,7 @@
+# Question 2
+# Implement a neural network-based text to speech model that can produce speech with a natural-sounding
+# tone and intonation. The model should be able to take as input a text string and output an audio waveform
+# that corresponds to the spoken version of the text
 import torch
 import torchaudio
 import numpy as np

@@ -13,6 +13,8 @@ def extract_entities_and_respond(user_message):
     named_entities = [(ent.text, ent.label_) for ent in doc.ents]
 
 
+
+
     chatbot_response = "I noticed you mentioned " # Generate a unique response, using a different variable name
     if named_entities:
         chatbot_response += ", ".join([f"{text} ({label})" for text, label in named_entities])
@@ -22,7 +24,7 @@ def extract_entities_and_respond(user_message):
     return chatbot_response, named_entities
 
 
-# Example usage
+# test
 test_message = "I plan to visit New York next Thursday."
 response, entities_from_message = extract_entities_and_respond(test_message)
 print(response)
