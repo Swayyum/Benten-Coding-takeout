@@ -8,36 +8,25 @@ import numpy as np
 from IPython.display import Audio
 from scipy.io.wavfile import write
 
-# Load pre-trained models from NVIDIA's repository
-tacotron2 = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tacotron2', model_math='fp16').to('cuda').eval()
-# Load the WaveGlow model
-waveglow = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_waveglow', model_math='fp16')
+tacotron2 = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tacotron2', model_math='fp16').to('cuda').eval() # load pre-trained models from NVIDIA's repository
+waveglow = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_waveglow', model_math='fp16') # load the WaveGlow model
 
-# Remove weight normalization from WaveGlow
-waveglow = waveglow.remove_weightnorm(waveglow)
+waveglow = waveglow.remove_weightnorm(waveglow) # removed weight normalization from WaveGlow
+waveglow = waveglow.to('cuda').eval() # moved the model to CUDA and set it to evaluation mode
 
-# Move the model to CUDA and set it to evaluation mode
-waveglow = waveglow.to('cuda').eval()
-
-
-# Load utility functions for text preprocessing
-utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tts_utils')
+utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tts_utils') # loaded utility functions for text preprocessing
 
 def text_to_speech(text):
-    # Prepare text input
-    sequences, lengths = utils.prepare_input_sequence([text])
-
-    # Generate mel-spectrogram and audio waveform
-    with torch.no_grad():
+    sequences, lengths = utils.prepare_input_sequence([text]) # prepare text input
+    with torch.no_grad(): # generate mel-spectrogram and audio waveform
         mel, _, _ = tacotron2.infer(sequences, lengths)
         audio = waveglow.infer(mel)
     audio_numpy = audio[0].data.cpu().numpy()
 
     # Save the generated speech to a WAV file
-    write("output.wav", 22050, audio_numpy)
+    write("output.mp3", 22050, audio_numpy) # Save the generated speech to a mp3 file
 
-# Example usage
-input_text = "Hello World! I am a text-to-speech modal"
+# tests
+input_text = "Hello World! I am a text-to-speech model   "
 text_to_speech(input_text)
 
-# The output.wav file can be played using an audio player
