@@ -4,23 +4,20 @@
 # timely manner.
 class UserConversation:
     def __init__(self):
-        # Initialize an empty list to store the conversation history
         self.history = []
 
     def add_message(self, message):
-        # Add a message to the conversation history
-        self.history.append(message)
+        self.history.append(message)  # Add a message to the conversation history
 
     def get_history(self):
-        # Return the conversation history
-        return self.history
+        return self.history # Return the conversation history
 
 
 class ChatbotManager:
     def __init__(self):
-        # Initialize a dictionary to store conversations keyed by user ID
-        self.conversations = {}
+        self.conversations = {} # Initialize a dictionary to store conversations keyed by user ID
 
+    #EXTRA FEATURES?!
     def get_conversation(self, user_id):
         # Retrieve the conversation for the given user ID.
         # If no conversation exists for the user, create a new one.

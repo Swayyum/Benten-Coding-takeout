@@ -1,47 +1,39 @@
 import torch
+import torchaudio
 import numpy as np
+from IPython.display import Audio
 from scipy.io.wavfile import write
 
 # Load pre-trained models from NVIDIA's repository
-tacotron2 = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tacotron2', model_math='fp16')
-tacotron2 = tacotron2.to('cuda')
-tacotron2.eval()
-
+tacotron2 = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tacotron2', model_math='fp16').to('cuda').eval()
+# Load the WaveGlow model
 waveglow = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_waveglow', model_math='fp16')
+
+# Remove weight normalization from WaveGlow
 waveglow = waveglow.remove_weightnorm(waveglow)
-waveglow = waveglow.to('cuda')
-waveglow.eval()
 
-# Function to preprocess text for Tacotron2
-def prepare_text_input(text):
-    # NVIDIA's Tacotron2 model requires text to be preprocessed in a specific way
-    # Refer to the NVIDIA's documentation or the tacotron2.text_to_sequence function's documentation
-    # for the correct preprocessing steps
-    # Example: sequence = np.array(tacotron2.text_to_sequence(text, ['english_cleaners']))[None, :]
-    # sequence = torch.from_numpy(sequence).to(device='cuda', dtype=torch.int64)
-    # return sequence
-    pass
+# Move the model to CUDA and set it to evaluation mode
+waveglow = waveglow.to('cuda').eval()
 
-# Function to perform text-to-speech conversion
+
+# Load utility functions for text preprocessing
+utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_tts_utils')
+
 def text_to_speech(text):
-    sequence = prepare_text_input(text)
+    # Prepare text input
+    sequences, lengths = utils.prepare_input_sequence([text])
 
-    # Generate mel-spectrogram using Tacotron2
+    # Generate mel-spectrogram and audio waveform
     with torch.no_grad():
-        _, mel, _, _ = tacotron2.infer(sequence)
-
-    # Generate audio waveform using WaveGlow
-    with torch.no_grad():
+        mel, _, _ = tacotron2.infer(sequences, lengths)
         audio = waveglow.infer(mel)
     audio_numpy = audio[0].data.cpu().numpy()
 
-    return audio_numpy
+    # Save the generated speech to a WAV file
+    write("output.wav", 22050, audio_numpy)
 
 # Example usage
-input_text = "Hello, I am your virtual assistant."
-speech_audio = text_to_speech(input_text)
-
-# Save the generated speech to a WAV file
-write("output.wav", 22050, speech_audio)
+input_text = "Hello World! I am a text-to-speech modal"
+text_to_speech(input_text)
 
 # The output.wav file can be played using an audio player

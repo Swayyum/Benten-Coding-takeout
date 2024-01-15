@@ -1,21 +1,19 @@
 # Question 2
 # Implement a function in Python that can extract named entities (such as people, places, and dates) from a
 # user's message to the chatbot, and use that information to generate a more personalized response.
-import spacy
+import numpy as np
 
-# Load the spaCy model
+import spacy
 nlp = spacy.load("en_core_web_sm")
 
 
 def extract_entities_and_respond(user_message):
     # Process the message
     doc = nlp(user_message)
-
-    # Extract entities
     named_entities = [(ent.text, ent.label_) for ent in doc.ents]
 
-    # Generate a unique response, using a different variable name
-    chatbot_response = "I noticed you mentioned "
+
+    chatbot_response = "I noticed you mentioned " # Generate a unique response, using a different variable name
     if named_entities:
         chatbot_response += ", ".join([f"{text} ({label})" for text, label in named_entities])
     else:
